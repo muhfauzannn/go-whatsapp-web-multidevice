@@ -1,0 +1,13 @@
+services:
+  whatsapp_go:
+    build:
+      context: .
+      dockerfile: docker/golang.Dockerfile
+    env_file:
+      - ${DOKPLOY_WA_ENV_FILE:?Configure DOKPLOY_WA_ENV_FILE in Dokploy}
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - "${DOKPLOY_WA_STORAGES:?Configure DOKPLOY_WA_STORAGES in Dokploy}:/app/storages"
+      - "${DOKPLOY_WA_STATICS:?Configure DOKPLOY_WA_STATICS in Dokploy}:/app/statics"
+    restart: on-failure
