@@ -1,4 +1,4 @@
-name: Deploy VPS
+name: Deploy Shurkou Staging WhatsApp
 
 on:
   push:
@@ -8,28 +8,20 @@ on:
       - "src/**"
       - "docker/**"
       - "docker-compose.yml"
-      - ".github/workflows/deploy-vps.yml"
-      - "scripts/deploy-vps-whatsapp.sh"
-      - "scripts/deploy-vps-whatsapp-ci.sh"
+      - "Dockerfile"
+      - "scripts/**"
   workflow_dispatch:
 
-jobs:
-  deploy-production:
-    name: Deploy production
-    runs-on: ubuntu-latest
-    environment: production
-    concurrency:
-      group: go-whatsapp-production
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
+concurrency:
+  group: shurkou-staging-whatsapp
+  cancel-in-progress: false
 
-      - name: Deploy to production VPS
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST || '217.216.110.140' }}
-          VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
-          VPS_USER: ${{ secrets.VPS_USER || 'root' }}
-          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
-          DEPLOY_ROOT: /opt/shurkou/production
-        run: ./scripts/deploy-vps-whatsapp-ci.sh
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy through Dokploy
+        uses: ./.github/actions/deploy-dokploy
+        with:
+          compose_id: La7palQ1zu2IyJweDzskx
+          dokploy_api_key: ${{ secrets.DOKPLOY_API_KEY }}
